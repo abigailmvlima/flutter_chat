@@ -17,7 +17,11 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         backgroundColor: Colors.blue,
       ),
-      body: const TextComposer(),
+      body: TextComposer(
+          sendMessage: (text){
+            print(text);
+          }
+      ),
     );
   }
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TextComposer extends StatefulWidget {
-  const TextComposer({super.key});
+
+  final Function(String) sendMessage;
+
+  const TextComposer({super.key, required this.sendMessage});
+
 
   @override
   State<TextComposer> createState() => _TextComposerState();
@@ -9,7 +13,16 @@ class TextComposer extends StatefulWidget {
 
 class _TextComposerState extends State<TextComposer> {
 
+  final TextEditingController _controller = TextEditingController();
+
   bool _isComposing = false;
+
+  void _reset(){
+    _controller.clear();
+    setState(() {
+      _isComposing = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +36,23 @@ class _TextComposerState extends State<TextComposer> {
           ),
           Expanded(
               child: TextField(
+                controller: _controller,
                 decoration: const InputDecoration.collapsed(hintText: 'Enviar uma Mensagem'),
                 onChanged: (text){
                   setState(() {
                     _isComposing = text.isNotEmpty;
                   });
                 },
-                onSubmitted: (text){},
+                onSubmitted: (text){
+                  widget.sendMessage(text);
+                  _reset();
+                },
               ),
           ),
           IconButton(
-              onPressed: _isComposing ? (){}: null,
+              onPressed: _isComposing ? (){
+                widget.sendMessage(_controller.text);
+              }: null,
               icon: const Icon(Icons.send),
           ),
         ],
