@@ -1,3 +1,4 @@
+import 'package:chat/text_composer.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -14,7 +15,9 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text('Olá'),
         elevation: 0,
+        backgroundColor: Colors.blue,
       ),
+      body: const TextComposer(),
     );
   }
 }
