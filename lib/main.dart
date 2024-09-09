@@ -14,9 +14,9 @@ void main() async {
 
   runApp(const MyApp());
 
-  await FirebaseFirestore.instance.collection("col").doc("doc").set({
-    "texto": "daniel2",
-  });
+  // await FirebaseFirestore.instance.collection("col").doc("doc").set({
+  //   "texto": "daniel2",
+  // });
 
 
 }
