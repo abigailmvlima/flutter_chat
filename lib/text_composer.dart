@@ -52,6 +52,7 @@ class _TextComposerState extends State<TextComposer> {
           IconButton(
               onPressed: _isComposing ? (){
                 widget.sendMessage(_controller.text);
+                _reset();
               }: null,
               icon: const Icon(Icons.send),
           ),
