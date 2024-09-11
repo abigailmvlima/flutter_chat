@@ -53,11 +53,42 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Olá'),
+        title: const Text('Chat'),
         elevation: 0,
         backgroundColor: Colors.blue,
       ),
-      body: TextComposer(sendMessage: _sendMessage),
+      body: Column(
+        children: [
+          Expanded(
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('messages').snapshots(),
+                  builder: (context, snapshot){
+                    switch(snapshot.connectionState){
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      default:
+                        List<DocumentSnapshot> documents =
+                            snapshot.data!.docs.reversed.toList();
+
+                        return ListView.builder(
+                          itemCount: documents.length,
+                          reverse: true,
+                          itemBuilder: (context, index){
+                            return ListTile(
+                              title: Text((documents[index].data() as Map<String, dynamic>?)?['text'] ?? ''),
+                            );
+                          }
+                        );
+                    }
+                  }
+              )
+          ),
+          TextComposer(sendMessage: _sendMessage),
+        ],
+      )
     );
   }
 }
@@ -92,18 +123,16 @@ class _TextComposerState extends State<TextComposer> {
         children: [
           IconButton(
             onPressed: () async {
-              print('aqui');
               final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
-              print('aqui666');
 
               if (pickedFile != null) {
-                print('aqui2');
-                print(pickedFile.path);
-
                 setState(() {
                   // Convertendo XFile para File
                   _imgFile = File(pickedFile.path);
                 });
+              // Enviar automaticamente a imagem sem precisar pressionar o botão "send"
+              widget.sendMessage(imgFile: _imgFile);
+              _reset(); // Resetar depois de enviar
               }
             },
             icon: const Icon(Icons.photo_camera),
@@ -114,11 +143,13 @@ class _TextComposerState extends State<TextComposer> {
               decoration: const InputDecoration.collapsed(hintText: 'Enviar uma mensagem'),
               onChanged: (text) {
                 setState(() {
-                  _isComposing = text.isNotEmpty || _imgFile != null;
+                  // Habilitar o botão de envio se houver texto
+                  _isComposing = text.isNotEmpty;
                 });
               },
               onSubmitted: (text) {
-                widget.sendMessage(text: text, imgFile: _imgFile);
+                // Enviar apenas texto
+                widget.sendMessage(text: text);
                 _reset();
               },
             ),
@@ -126,7 +157,8 @@ class _TextComposerState extends State<TextComposer> {
           IconButton(
             onPressed: _isComposing
                 ? () {
-              widget.sendMessage(text: _controller.text, imgFile: _imgFile);
+              // Enviar somente o texto
+              widget.sendMessage(text: _controller.text);
               _reset();
             }
                 : null,
