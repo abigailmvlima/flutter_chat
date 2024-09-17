@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../chat_message.dart';
+
 class MessageList extends StatelessWidget {
   const MessageList({super.key});
 
@@ -22,11 +24,8 @@ class MessageList extends StatelessWidget {
                 itemCount: documents.length,
                 reverse: true,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      (documents[index].data() as Map<String, dynamic>?)?['text'] ?? '',
-                    ),
-                  );
+                  final Map<String, dynamic> documentData = documents[index].data() as Map<String, dynamic>;
+                  return ChatMessage(documentData);
                 },
               );
           }

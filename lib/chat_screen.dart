@@ -43,29 +43,38 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage({String? text, File? imgFile}) async {
-    final User? user = await _authManager.getUser(context, _currentUser, (User? user) {
-      setState(() {
-        _currentUser = user;
-      });
-    });
-
-    if (user == null) {
-      print('[ChatScreen] Não foi possível enviar a mensagem, o usuário não está logado.');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não foi possível fazer o login. Tente novamente'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+    // final User? user = await _authManager.getUser(context, _currentUser, (User? user) {
+    //   setState(() {
+    //     _currentUser = user;
+    //   });
+    // });
+    //
+    // if (user == null) {
+    //   print('[ChatScreen] Não foi possível enviar a mensagem, o usuário não está logado.');
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('Não foi possível fazer o login. Tente novamente'),
+    //       backgroundColor: Colors.red,
+    //     ),
+    //   );
+    //   return;
+    // }
 
     print('[ChatScreen] Enviando mensagem...');
 
+    // Map<String, dynamic> data = {
+    //   'uid': user.uid,
+    //   'displayName': user.displayName,
+    //   'photoURL': user.photoURL,
+    //   'timestamp': Timestamp.now(),
+    // };
+
+
+
     Map<String, dynamic> data = {
-      'uid': user.uid,
-      'displayName': user.displayName,
-      'photoURL': user.photoURL,
+      'uid': 'jhjuuhhhh',
+      'senderName': 'Abigail',
+      'senderPhotoUrl': 'photo',
       'timestamp': Timestamp.now(),
     };
 
