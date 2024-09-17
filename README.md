@@ -1,5 +1,13 @@
 # Chat
 
+# Para obter a chave SHA1.
+
+Windows
+keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+Linux/Mac
+keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore -storepass android -keypass android
+
 # Credentials Firebase
 
     import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;

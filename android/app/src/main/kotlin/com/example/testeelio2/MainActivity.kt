@@ -1,4 +1,4 @@
-package com.example.testeelio2
+package com.br.bi.chat
 
 import io.flutter.embedding.android.FlutterActivity
 

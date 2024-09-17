@@ -1,3 +1,22 @@
+// Removi o bloco "plugins {}" e mantive o "buildscript {}"
+
+buildscript {
+    ext {
+        // Defina as versões do Google Services e outros plugins aqui
+        googleServicesVersion = "4.3.15"  // Versão do Google Services
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.4"
+//        classpath "com.google.gms:google-services:$googleServicesVersion"
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -5,15 +24,18 @@ allprojects {
     }
 }
 
+// Configuração do diretório de build para organizar as saídas
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
+// Garante que o projeto principal (":app") seja avaliado antes dos subprojetos
 subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Task para limpar o projeto
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-

@@ -1,41 +1,53 @@
+import 'dart:async';
+
 import 'package:chat/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';  // Importar Firestore
 
 import 'firebase_options.dart';
 
-void main() async {
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+    try {
+      print("[MAIN] Iniciando a inicialização do Firebase...");
 
-  runApp(const MyApp());
+      // Verifique e remova qualquer instância anterior do Firebase
+      if (Firebase.apps.isNotEmpty) {
+        await Firebase.app().delete();  // Remove a instância do Firebase se existir
+        print("[MAIN] Instância anterior do Firebase removida.");
+      }
 
-  // await FirebaseFirestore.instance.collection("col").doc("doc").set({
-  //   "texto": "daniel2",
-  // });
+      // Inicialize o Firebase com firebase_options.dart
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print("[MAIN] Firebase inicializado com sucesso.");
 
-
+      runApp(const MyApp());
+      print("[MAIN] Aplicativo iniciado com sucesso.");
+    } catch (e) {
+      print("[MAIN] Erro na inicialização do Firebase: $e");
+    }
+  }, (error, stackTrace) {
+    print("[MAIN] Erro capturado no runZonedGuarded: $error");
+  });
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print("[MAIN] Construindo o widget MyApp...");
     return MaterialApp(
       title: 'Chat Flutter',
-       debugShowCheckedModeBanner: false,
-       theme: ThemeData(
-           iconTheme: const IconThemeData(color: Colors.blue),
-       ),
-       home: const ChatScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        iconTheme: const IconThemeData(color: Colors.blue),
+      ),
+      home: const ChatScreen(),
     );
   }
 }
-
-
