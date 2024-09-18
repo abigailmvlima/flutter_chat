@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ChatMessage extends StatelessWidget {
-  const ChatMessage(this.data, {super.key});
+  const ChatMessage(this.data, this.mine, {super.key});
 
   final Map<String, dynamic> data;
+  final bool mine;
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +14,7 @@ class ChatMessage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
         children: [
+          !mine ?
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: CircleAvatar(
@@ -18,22 +22,23 @@ class ChatMessage extends StatelessWidget {
             ? NetworkImage(data['senderPhotoUrl'] as String) // Converte a string da URL em um NetworkImage
                   : const NetworkImage('https://via.placeholder.com/150'), // Placeholder simples
           ),
-          ),
+          ) : Container(),
           Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
                   data['imgUrl'] != null
-                      ? Image.network(data['imgUrl'] as String)
+                      ? Image.network(data['imgUrl'] as String, width: 250,)
                       : Text(
                         data['text'] ?? '', // Se 'text' for nulo, mostra uma string vazia,
+                        textAlign: mine ? TextAlign.end : TextAlign.start,
                         style: const TextStyle(
-                          fontSize: 16
+                          fontSize: 18
                         ),
                       ),
                   Text(
                     data['senderName'] ?? '', // Se 'senderName' for nulo, mostra uma string vazia,
-                    style: const TextStyle(
+                      style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500
                     ),
@@ -41,6 +46,15 @@ class ChatMessage extends StatelessWidget {
                 ],
               )
           ),
+          mine ?
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CircleAvatar(
+              backgroundImage: data['senderPhotoUrl'] != null
+                  ? NetworkImage(data['senderPhotoUrl'] as String) // Converte a string da URL em um NetworkImage
+                  : const NetworkImage('https://via.placeholder.com/150'), // Placeholder simples
+            ),
+          ) : Container(),
         ],
       ),
     );

@@ -25,7 +25,7 @@ class MessageList extends StatelessWidget {
                 reverse: true,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> documentData = documents[index].data() as Map<String, dynamic>;
-                  return ChatMessage(documentData);
+                  return ChatMessage(documentData, true);
                 },
               );
           }
