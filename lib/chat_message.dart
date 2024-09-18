@@ -11,13 +11,17 @@ class ChatMessage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
         children: [
-          CircleAvatar(
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CircleAvatar(
             backgroundImage: data['senderPhotoUrl'] != null
-                ? NetworkImage(data['senderPhotoUrl'] as String) // Converte a string da URL em um NetworkImage
-                : const NetworkImage('https://via.placeholder.com/150'), // Placeholder simples
+            ? NetworkImage(data['senderPhotoUrl'] as String) // Converte a string da URL em um NetworkImage
+                  : const NetworkImage('https://via.placeholder.com/150'), // Placeholder simples
+          ),
           ),
           Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   data['imgUrl'] != null
                       ? Image.network(data['imgUrl'] as String)
