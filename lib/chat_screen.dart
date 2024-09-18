@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'componts/auth_manager.dart';
 import 'componts/message_list.dart';
 import 'componts/text_composer.dart';
 
+import 'data/mock_user.dart';
 import 'firebase_options.dart'; // Certifique-se de que o arquivo firebase_options.dart está sendo importado corretamente
 
 class ChatScreen extends StatefulWidget {
@@ -22,6 +24,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final AuthManager _authManager = AuthManager();
   User? _currentUser;
 
+  late bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +35,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void _checkFirebaseInitialization() {
     if (Firebase.apps.isNotEmpty) {
       print("[ChatScreen] Firebase está inicializado, ouvindo authStateChanges.");
+      setState(() {
+            _currentUser = MockUser();
+          });
       // FirebaseAuth.instance.authStateChanges().listen((User? user) {
       //   print("[ChatScreen] authStateChanges recebido. Usuário: ${user?.displayName ?? 'Nenhum usuário logado'}");
       //   setState(() {
@@ -83,8 +90,14 @@ class _ChatScreenState extends State<ChatScreen> {
         print('[ChatScreen] Upload de imagem em andamento...');
         UploadTask task = FirebaseStorage.instance
             .ref()
-            .child(DateTime.now().millisecondsSinceEpoch.toString())
+            .child(DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString())
             .putFile(imgFile);
+        setState(() {
+          _isLoading = true;
+        });
 
         TaskSnapshot snapshot = await task.whenComplete(() => null);
         String downloadUrl = await snapshot.ref.getDownloadURL();
@@ -98,7 +111,15 @@ class _ChatScreenState extends State<ChatScreen> {
             backgroundColor: Colors.red,
           ),
         );
+        setState(() {
+          _isLoading = false;
+        });
         return;
+      } finally {
+        // Sempre desliga o indicador de progresso quando o upload termina
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
 
@@ -117,13 +138,36 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        title: Text(
+            _currentUser != null ? 'Olá, ${_currentUser?.displayName}' : 'Chat App'
+        ),
+        centerTitle: true,
         elevation: 0,
+        actions: [
+          _currentUser != null ? IconButton(
+              onPressed: () {
+                // FirebaseAuth.instance.signOut();
+                // GoogleSignIn().signOut();
+                setState(() {
+                  _currentUser = null;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Você saiu com sucesso')
+                  ),
+                );
+              },
+              icon: const Icon(Icons.exit_to_app),
+          ) : Container(),
+        ],
         backgroundColor: Colors.blue,
       ),
       body: Column(
         children: [
-          const MessageList(),
+          const Expanded(
+            child: MessageList(), // Expande o MessageList para ocupar o espaço disponível
+          ),
+          _isLoading ? const LinearProgressIndicator() : Container(),
           TextComposer(sendMessage: _sendMessage),
         ],
       ),

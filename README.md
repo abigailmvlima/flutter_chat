@@ -23,3 +23,12 @@ keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore -sto
         }
     }
 
+
+
+
+Quando o login do google estiver funcionando acrescentar orderBy('time') no componente message_list
+igual modelo abaixo
+
+return Expanded(
+child: StreamBuilder(
+stream: FirebaseFirestore.instance.collection('messages').orderBy('time').snapshots(),

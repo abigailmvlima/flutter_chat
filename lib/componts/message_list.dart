@@ -10,7 +10,7 @@ class MessageList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('messages').snapshots(),
+        stream: FirebaseFirestore.instance.collection('messages').orderBy('timestamp', descending: false).snapshots(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -19,10 +19,9 @@ class MessageList extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             default:
-              List<DocumentSnapshot> documents = snapshot.data!.docs.reversed.toList();
+              List<DocumentSnapshot> documents = snapshot.data!.docs.toList();
               return ListView.builder(
                 itemCount: documents.length,
-                reverse: true,
                 itemBuilder: (context, index) {
                   final Map<String, dynamic> documentData = documents[index].data() as Map<String, dynamic>;
                   return ChatMessage(documentData, true);
